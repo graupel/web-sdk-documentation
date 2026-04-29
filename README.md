@@ -1,6 +1,6 @@
 # QuadraScan SDK — Getting Started
 
-The QuadraScan SDK embeds a full-body 3D scan and measurement experience into any website with a single `<script>` tag and two function calls. The entire scan flow — camera access, pose detection, 3D model generation, and measurements — runs inside a hosted iframe overlay. No processing code runs on your site.
+The QuadraScan SDK adds a full-body 3D scan to your site with one `<script>` tag, `init()`, and `startScan()`. The flow (camera, pose detection, mesh generation, measurements) runs in a hosted iframe — your page does not run the scan logic.
 
 ---
 
@@ -43,9 +43,9 @@ QuadraScan.init({
 
 **Pre-filling athlete data (optional)**
 
-If you already have the athlete's information, pass it via the `athlete` option to pre-fill the **Athlete Info** step in the scan flow:
+If you already have the athlete's information, pass an `athlete` object to pre-fill the **Athlete Info** step:
 
-**TOU -> Athlete Info -> Scan Type -> Camera/Upload -> Viewer**
+**TOU → Athlete Info → Scan Type → Camera/Upload → Viewer**
 
 ```js
 QuadraScan.init({
@@ -131,7 +131,7 @@ document.getElementById('scan-btn').addEventListener('click', () => {
 | `heightCm` | number | Height in centimeters (e.g. `170`). Converted to ft/in internally. Use instead of `heightFt/In`. |
 | `heightFt` | number | Height — feet component (e.g. `5`). Use if `heightCm` is omitted. |
 | `heightIn` | number | Height — inches component (e.g. `7`). Defaults to `0` if omitted. |
-| `weight` | number | Body weight as a number. Sent to the API in imperial lbs when provided. |
+| `weight` | number | Body weight as a number; combined with `weightUnit`, then normalized to imperial for the API. |
 | `weightUnit` | string | Input hint: `'imperial'` (lbs) or `'metric'` (kg). Defaults to `'imperial'`. |
 
 ### `tutorial` fields
@@ -150,9 +150,8 @@ The tutorial is a full-screen instructional screen shown before the user enters 
 
 A **Tutorial** button appears on the scan options screen at all times (unless `enabled: false`) so users can rewatch whenever they want.
 
-### localStorage key
+The watched flag lives in `localStorage` so it survives closing the tab. In the embed, the key is scoped by parent origin (e.g. `__qs_tutorial_watched:https://your-site.com`) so different embedding sites do not share the same flag.
 
-The "watched" flag is stored in `localStorage` (not `sessionStorage`) so it persists across browser sessions on the same device/browser.
 ---
 
 ## `startScan()` Options
@@ -472,5 +471,4 @@ WebViewController()
 | Tutorial never shows despite `required: true` | The watched flag was set in a previous session | Clear the flag from the browser console: `Object.keys(localStorage).filter(k => k.startsWith('__qs_tutorial_watched')).forEach(k => localStorage.removeItem(k))` |
 | Tutorial button not visible | `enabled: false` was passed to `init()` | Set `tutorial: { enabled: true }` or omit the `tutorial` option entirely |
 
----
 ---
