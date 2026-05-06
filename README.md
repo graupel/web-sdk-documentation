@@ -110,7 +110,7 @@ document.getElementById('scan-btn').addEventListener('click', () => {
 | `club` | string | No | `''` | Club name associated with the athlete (e.g. `'FC Dallas'`). Stored with the athlete record. |
 | `athleteId` | string | No | `''` | Caller-supplied UUID (v4) to identify the athlete. If an athlete with this UUID already exists it is returned as-is (idempotent); if not, a new athlete is created using this UUID instead of an auto-generated one. Must be a valid UUID format. |
 | `athlete` | object | No | `{}` | Pre-supplied athlete data used to pre-fill Athlete Info. See the **`athlete` fields** table below. |
-| `scanType` | string | No | `'both'` | `'self'` = guided camera scan only. `'manual'` = upload photos from library only. `'both'` = user chooses Guided Scan vs Upload Photos on the landing screen. |
+| `scanType` | string | No | `'both'` | Controls which option appears on the landing screen. `'self'` = Guided Scan button only (Upload Photos hidden). `'manual'` = Upload Photos button only (Guided Scan hidden). `'both'` = both options shown, user chooses. |
 | `tutorial` | object | No | `{ enabled: true, required: true, requireEveryTime: false }` | Controls the pre-scan tutorial shown before Guided Scan and Upload Photos. See the **`tutorial` fields** table and **Pre-scan Tutorial** section below. |
 | `showResults` | boolean | No | `true` | Whether to show the measurements screen after the scan completes. If `false`, `onComplete` still fires with the full result payload, and then the overlay closes automatically (no action required by the user). |
 | `width` | string | No | `'1000px'` | Max width of the iframe overlay, e.g. `'720px'`. |
