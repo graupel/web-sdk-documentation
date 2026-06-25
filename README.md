@@ -156,6 +156,8 @@ document.getElementById('scan-btn').addEventListener('click', () => {
 | `scanType` | string | No | `'both'` | Controls which option appears on the landing screen. `'self'` = Guided Scan button only (Upload Photos hidden). `'manual'` = Upload Photos button only (Guided Scan hidden). `'both'` = both options shown, user chooses. |
 | `tutorial` | object | No | `{ enabled: true, required: true, requireEveryTime: false }` | Controls the pre-scan tutorial shown before Guided Scan and Upload Photos. See the **`tutorial` fields** table and **Pre-scan Tutorial** section below. |
 | `showResults` | boolean | No | `true` | Whether to show the measurements screen after the scan completes. If `false`, `onComplete` still fires with the full result payload, and then the overlay closes automatically (no action required by the user). |
+| `allowUserEdit` | boolean | No | `true` | When `false`, hides the **Edit** button on the post-scan viewer and blocks the edit modal. Does not affect first-time collection of missing athlete fields. |
+| `showUseCredit` | boolean | No | `false` | When `true`, shows the upload credit notice on the viewer screen. |
 | `units` | string | No | `'imperial'` | Display unit system for the measurements screen: `'imperial'` (lbs, inches) or `'metric'` (kg, cm). Does not affect the raw values in the `onComplete` payload — API values are always SI. |
 | `results` | object | No | all `true` | Controls which result sections are visible when `showResults` is `true`. See the **`results` fields** table below. If all three sections are disabled the empty-state screen is shown. |
 | `theme` | object | No | dark default | Re-skins the iframe UI in your brand. All sub-keys are optional and individually overridable. See the **`theme` fields** table below. The theme is frozen at `init()` — to change themes between sessions, call `init()` again with a new theme before the next `startScan()`. |
@@ -563,6 +565,8 @@ WebViewController()
         required:         true,               // first-time users must watch
         requireEveryTime: false,              // skip for returning users via localStorage
       },
+      allowUserEdit: true,                    // optional (default: true) — set false to hide Edit on viewer
+      showUseCredit: false,                   // optional (default: false) — set true to show upload credit notice
     });
 
     document.getElementById('scan-btn').addEventListener('click', () => {
