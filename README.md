@@ -65,7 +65,7 @@ QuadraScan.init({
 
 **Pre-filling athlete data (optional)**
 
-If you already have the athlete's information, pass an `athlete` object to pre-fill the **Athlete Info** step:
+If you already have the athlete's information, pass an `athlete` object to pre-fill the **Athlete Info** step. Any field you omit is shown to the user during that step.
 
 **TOU → Athlete Info → Scan Type → Camera/Upload → Viewer**
 
@@ -80,6 +80,7 @@ QuadraScan.init({
   athlete: {
     firstName:  'Jane',
     lastName:   'Doe',
+    email:      'jane.doe@example.com',  // optional pre-fill
     gender:     'Female',        // case-insensitive: 'male' | 'female' | 'other'
     dob:        '2005-08-14',    // YYYY-MM-DD (must be a real calendar date)
     heightCm:   170,             // metric height (cm). Converted to ft/in internally.
@@ -103,7 +104,7 @@ QuadraScan.init({
 ```
 
 The SDK trims string fields, normalizes `gender` to lowercase (`Male` and `male` both work),
-validates `dob` as a real `YYYY-MM-DD` date, and always converts `height` and `weight` to 
+validates `dob` as a real `YYYY-MM-DD` date, validates `email` format when provided, and always converts `height` and `weight` to 
 imperial units (ft/in and lbs) before sending athlete data to the API.
 
 ### 3. Start a scan
@@ -152,7 +153,7 @@ document.getElementById('scan-btn').addEventListener('click', () => {
 | `teamId` | string | **Yes** | — | Team ID to associate all scans with. Never shown to the end user. |
 | `club` | string | No | `''` | Club name associated with the athlete (e.g. `'FC Dallas'`). Stored with the athlete record. |
 | `athleteId` | string | No | `''` | Caller-supplied UUID (v4) to identify the athlete. If an athlete with this UUID already exists it is returned as-is (idempotent); if not, a new athlete is created using this UUID instead of an auto-generated one. Must be a valid UUID format. |
-| `athlete` | object | No | `{}` | Pre-supplied athlete data used to pre-fill Athlete Info. See the **`athlete` fields** table below. |
+| `athlete` | object | No | `{}` | Pre-supplied athlete data used to pre-fill Athlete Info. Only fields that are **not** provided are shown to the user. See the **`athlete` fields** table below. |
 | `scanType` | string | No | `'both'` | Controls which option appears on the landing screen. `'self'` = Guided Scan button only (Upload Photos hidden). `'manual'` = Upload Photos button only (Guided Scan hidden). `'both'` = both options shown, user chooses. |
 | `tutorial` | object | No | `{ enabled: true, required: true, requireEveryTime: false }` | Controls the pre-scan tutorial shown before Guided Scan and Upload Photos. See the **`tutorial` fields** table and **Pre-scan Tutorial** section below. |
 | `showResults` | boolean | No | `true` | Whether to show the measurements screen after the scan completes. If `false`, `onComplete` still fires with the full result payload, and then the overlay closes automatically (no action required by the user). |
@@ -174,6 +175,7 @@ document.getElementById('scan-btn').addEventListener('click', () => {
 |---|---|---|
 | `firstName` | string | Athlete's first name. Leading/trailing spaces are trimmed. |
 | `lastName` | string | Athlete's last name. Leading/trailing spaces are trimmed. |
+| `email` | string | Optional. Athlete's email address. When provided, pre-fills the record; not collected from the end user in SDK embed mode. |
 | `gender` | string | Case-insensitive: `'male'` \| `'female'` \| `'other'`. |
 | `dob` | string | Date of birth in strict `YYYY-MM-DD` format (must be a real calendar date). |
 | `heightCm` | number | Height in centimeters (e.g. `170`). Converted to ft/in internally. Use instead of `heightFt/In`. |
