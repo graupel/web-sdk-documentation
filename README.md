@@ -294,6 +294,12 @@ The watched flag lives in `localStorage` so it survives closing the tab. In the 
 
 ---
 
+## Pre-scan Checklist
+
+After the tutorial (and before every scan, every time — not just first-time users), a three-slide checklist asks the user to confirm shorts fit, shirt fit, and the A-pose stance. Each item must be checked before advancing; all three must be confirmed before "Start Scan" unlocks. This step is not configurable via `init()`.
+
+---
+
 ## `startScan()` Options
 
 | Option | Type | Required | Description |
