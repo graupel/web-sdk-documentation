@@ -300,6 +300,14 @@ After the tutorial (and before every scan, every time — not just first-time us
 
 ---
 
+## Parental Consent Gate
+
+GDPR requires a verified parent or guardian to sign off before QuadraScan can collect body-scan data from an athlete under the age of consent. The SDK can enforce this automatically with a built-in **parental consent gate**. The first time a minor tries to scan, the gate blocks it and walks the athlete through sending a one-time approval link to their parent or guardian. Once that link is approved, scanning unlocks. Adults and already-approved minors are never affected, and never see the flow.
+
+The gate is **per-team, and off by default**. A team enables it by **reaching out to Fit:Match**. There's no `init()` option for it, and nothing to build into the host page. It all runs inside the iframe, so `startScan()` and its callbacks behave exactly as they do elsewhere in this guide. Whether an athlete counts as a minor comes from their date of birth (collected during Athlete Info, or supplied ahead of time via `athlete.dob`). When there's no date of birth on file, the gate plays it safe and treats the athlete as needing consent until one is provided.
+
+---
+
 ## `startScan()` Options
 
 | Option | Type | Required | Description |
@@ -636,7 +644,7 @@ WebViewController()
 - **License keys are intentionally client-visible** — the security model is origin enforcement, not key secrecy (same as Stripe's publishable key).
 - Every API request from the iframe is validated against both the license key and the registered origin. Requests from unregistered origins are rejected with HTTP 403.
 - Your upstream API credentials (`QUADRASCAN_API_KEY`, `REFLECT_API_KEY`) are server-side only and never sent to the client.
-- The iframe requires `allow="camera; microphone"` — the SDK sets this automatically. No other permissions are needed.
+- The iframe requires `allow="camera; microphone; web-share"` — the SDK sets this automatically (`web-share` powers the native share sheet on the parental-consent screens). No other permissions are needed.
 
 ---
 
