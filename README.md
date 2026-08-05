@@ -44,6 +44,8 @@ QuadraScan.init({
     required:         true,       // first-time users must watch before scanning
     requireEveryTime: false,      // if true, ignores localStorage and always shows tutorial
   },
+  showChecklist:  true,           // optional — pre-scan attire/pose checklist (default: true)
+  showSilhouette: true,           // optional — pose avatar + camera overlay (default: true)
   theme: {                        // optional — re-skin the iframe in your brand
     backgroundColor:        '#0b1320',
     surfaceCardColor:       '#141d2f',
@@ -67,7 +69,7 @@ QuadraScan.init({
 
 If you already have the athlete's information, pass an `athlete` object to pre-fill the **Athlete Info** step. Any field you omit is shown to the user during that step.
 
-**TOU → Athlete Info → Scan Type → Camera/Upload → Viewer**
+**TOU → Athlete Info → Scan Type → Tutorial (first visit) → Checklist → Camera/Upload → Viewer**
 
 ```js
 QuadraScan.init({
@@ -92,6 +94,8 @@ QuadraScan.init({
   },
   scanType:    'both',           // optional: 'self' | 'manual' | 'both' (default: 'both')
   showResults: true,             // optional: show measurements screen after scan (default: true)
+  showChecklist:  true,          // optional — pre-scan checklist (default: true)
+  showSilhouette: true,          // optional — pose avatar + camera overlay (default: true)
   units:       'metric',         // optional: 'imperial' (default) | 'metric'
   results: {                     // optional: hide individual result sections
     showPhv:             false,  // hide Body Maturation (PHV)
@@ -159,6 +163,8 @@ document.getElementById('scan-btn').addEventListener('click', () => {
 | `showResults` | boolean | No | `true` | Whether to show the measurements screen after the scan completes. If `false`, `onComplete` still fires with the full result payload, and then the overlay closes automatically (no action required by the user). |
 | `allowUserEdit` | boolean | No | `true` | When `false`, hides the **Edit** button on the post-scan viewer and blocks the edit modal. Does not affect first-time collection of missing athlete fields. |
 | `showUseCredit` | boolean | No | `false` | When `true`, shows the upload credit notice on the viewer screen. |
+| `showChecklist` | boolean | No | `true` | Pre-scan attire/pose checklist before each scan. Set to `false` to skip. |
+| `showSilhouette` | boolean | No | `true` | Pose avatar and A-pose camera overlay during Guided Scan / Take Photos. Set to `false` to hide (text directions remain). |
 | `units` | string | No | `'imperial'` | Display unit system for the measurements screen: `'imperial'` (lbs, inches) or `'metric'` (kg, cm). Does not affect the raw values in the `onComplete` payload — API values are always SI. |
 | `results` | object | No | all `true` | Controls which result sections are visible when `showResults` is `true`. See the **`results` fields** table below. If all three sections are disabled the empty-state screen is shown. |
 | `theme` | object | No | dark default | Re-skins the iframe UI in your brand. All sub-keys are optional and individually overridable. See the **`theme` fields** table below. The theme is frozen at `init()` — to change themes between sessions, call `init()` again with a new theme before the next `startScan()`. |
@@ -296,7 +302,9 @@ The watched flag lives in `localStorage` so it survives closing the tab. In the 
 
 ## Pre-scan Checklist
 
-After the tutorial (and before every scan, every time — not just first-time users), a three-slide checklist asks the user to confirm shorts fit, shirt fit, and the A-pose stance. Each item must be checked before advancing; all three must be confirmed before "Start Scan" unlocks. This step is not configurable via `init()`.
+After the tutorial (and before every scan, every time — not just first-time users), a three-slide checklist asks the user to confirm shorts fit, shirt fit, and the A-pose stance. Each item must be checked before advancing; all three must be confirmed before "Start Scan" unlocks. Disable with `showChecklist: false`.
+
+During Guided Scan and Take Photos, a pose avatar and A-pose camera overlay help the user align their body. Disable with `showSilhouette: false` (text directions remain).
 
 ---
 
@@ -583,6 +591,8 @@ WebViewController()
       },
       allowUserEdit: true,                    // optional (default: true) — set false to hide Edit on viewer
       showUseCredit: false,                   // optional (default: false) — set true to show upload credit notice
+      showChecklist: true,                    // optional (default: true) — set false to skip the pre-scan checklist
+      showSilhouette: true,                   // optional (default: true) — set false to hide the pose avatar + A-pose overlay
     });
 
     document.getElementById('scan-btn').addEventListener('click', () => {
@@ -667,3 +677,5 @@ WebViewController()
 | Tutorial keeps showing for returning users | `localStorage` cleared or blocked (e.g. private browsing) | Expected — private/incognito mode does not persist `localStorage`. Use `requireEveryTime: true` where this matters. |
 | Tutorial never shows despite `required: true` | The watched flag was set in a previous session | Clear the flag from the browser console: `Object.keys(localStorage).filter(k => k.startsWith('__qs_tutorial_watched')).forEach(k => localStorage.removeItem(k))` |
 | Tutorial button not visible | `enabled: false` was passed to `init()` | Set `tutorial: { enabled: true }` or omit the `tutorial` option entirely |
+| Pre-scan checklist still appears | `showChecklist` not disabled | Pass `showChecklist: false` in `init()` to skip the checklist |
+| Pose silhouette still visible | `showSilhouette` not disabled | Pass `showSilhouette: false` in `init()` to hide the avatar and camera overlay |
