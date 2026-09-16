@@ -2,6 +2,8 @@
 
 The QuadraScan SDK adds a full-body 3D scan to your site with one `<script>` tag, `init()`, and `startScan()`. The flow (camera, pose detection, mesh generation, measurements) runs in a hosted iframe — your page does not run the scan logic.
 
+Release history: [`CHANGELOG.md`](CHANGELOG.md).
+
 ---
 
 ## Prerequisites
@@ -88,7 +90,7 @@ QuadraScan.init({
     heightCm:   170,             // metric height (cm). Converted to ft/in internally.
     // OR use imperial instead of heightCm:
     // heightFt: 5,
-    // heightIn: 7,
+    // heightIn: 7,          // or 7.5; snapped to the nearest 0.5 inch
     weight:     59,              // weight as a number
     weightUnit: 'metric',        // 'imperial' (lbs) | 'metric' (kg) — default: 'imperial'
   },
@@ -96,6 +98,7 @@ QuadraScan.init({
   showResults: true,             // optional: show measurements screen after scan (default: true)
   showChecklist:  true,          // optional — pre-scan checklist (default: true)
   showSilhouette: true,          // optional — pose avatar + camera overlay (default: true)
+  telemetry:      true,          // optional — anonymous product analytics (default: true; pass false to opt out)
   units:       'metric',         // optional: 'imperial' (default) | 'metric'
   results: {                     // optional: hide individual result sections
     showPhv:             false,  // hide Body Maturation (PHV)
@@ -165,7 +168,8 @@ document.getElementById('scan-btn').addEventListener('click', () => {
 | `showUseCredit` | boolean | No | `false` | When `true`, shows the upload credit notice on the viewer screen. |
 | `showChecklist` | boolean | No | `true` | Pre-scan attire/pose checklist before each scan. Set to `false` to skip. |
 | `showSilhouette` | boolean | No | `true` | Pose avatar and A-pose camera overlay during Guided Scan / Take Photos. Set to `false` to hide (text directions remain). |
-| `units` | string | No | `'imperial'` | Display unit system for the measurements screen: `'imperial'` (lbs, inches) or `'metric'` (kg, cm). Does not affect the raw values in the `onComplete` payload — API values are always SI. |
+| `telemetry` | boolean | No | `true` | Anonymous product-usage analytics inside the scan iframe. Pass `false` to skip Mixpanel entirely — nothing is written to cookies or storage and no events are sent. |
+| `units` | string | No | `'imperial'` | Display unit system for the avatar review (scan summary) card and the measurements screen: `'imperial'` (lbs, inches) or `'metric'` (kg, cm). Does not affect the raw values in the `onComplete` payload — API values are always SI. |
 | `results` | object | No | all `true` | Controls which result sections are visible when `showResults` is `true`. See the **`results` fields** table below. If all three sections are disabled the empty-state screen is shown. |
 | `theme` | object | No | dark default | Re-skins the iframe UI in your brand. All sub-keys are optional and individually overridable. See the **`theme` fields** table below. The theme is frozen at `init()` — to change themes between sessions, call `init()` again with a new theme before the next `startScan()`. |
 | `width` | string | No | `'1000px'` | Max width of the iframe overlay, e.g. `'720px'`. |
@@ -186,7 +190,7 @@ document.getElementById('scan-btn').addEventListener('click', () => {
 | `dob` | string | Date of birth in strict `YYYY-MM-DD` format (must be a real calendar date). |
 | `heightCm` | number | Height in centimeters (e.g. `170`). Converted to ft/in internally. Use instead of `heightFt/In`. |
 | `heightFt` | number | Height — feet component (e.g. `5`). Use if `heightCm` is omitted. |
-| `heightIn` | number | Height — inches component (e.g. `7`). Defaults to `0` if omitted. |
+| `heightIn` | number | Height — inches component (e.g. `7` or `7.5`). Snapped to the nearest 0.5 inch. Defaults to `0` if omitted. |
 | `weight` | number | Body weight as a number; combined with `weightUnit`, then normalized to imperial for the API. |
 | `weightUnit` | string | Input hint: `'imperial'` (lbs) or `'metric'` (kg). Defaults to `'imperial'`. |
 
@@ -342,6 +346,16 @@ Inside the iframe, the top-right **Exit** control uses the same confirmation rul
 
 ---
 
+## `version`
+
+```js
+QuadraScan.version  // e.g. '1.1.0'
+```
+
+String. The SDK version from `package.json` (semver). Safe to log; does not require `init()`. See [`CHANGELOG.md`](CHANGELOG.md).
+
+---
+
 ## Result Payload (`onComplete`)
 
 ```js
@@ -378,7 +392,7 @@ Each measurement entry inside a category follows this shape:
 
 ### Units
 
-The `onComplete` payload always contains raw API values in SI units, regardless of the `units` display option. The `units` option only affects what is rendered inside the iframe measurements screen.
+The `onComplete` payload always contains raw API values in SI units, regardless of the `units` display option. The `units` option only affects what is rendered inside the iframe (avatar review summary and measurements screen).
 
 | `unit` value | Meaning |
 |---|---|
@@ -593,6 +607,7 @@ WebViewController()
       showUseCredit: false,                   // optional (default: false) — set true to show upload credit notice
       showChecklist: true,                    // optional (default: true) — set false to skip the pre-scan checklist
       showSilhouette: true,                   // optional (default: true) — set false to hide the pose avatar + A-pose overlay
+      telemetry:      true,                   // optional (default: true) — set false to opt out of analytics
     });
 
     document.getElementById('scan-btn').addEventListener('click', () => {
